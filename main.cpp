@@ -12,6 +12,17 @@ void signal_handler (int sig)
     interrupted = 1;
 }
 
+/**************************
+*函数名：catch_signals
+*函数功能：捕获信号
+*输入参数：无
+*输出参数：无
+*返回值：无
+*作者：何必仕
+*完成日期：2017-4-19
+*修改日期：
+***************************/
+
 void catch_signals (void)
 {
     struct sigaction action;
@@ -24,15 +35,13 @@ void catch_signals (void)
 
 
 
-
-
-
-
-
 int main (void)
 {
     catch_signals();
+    //zeromq 上下文
     void *context = zmq_ctx_new();
+    
+    //PUB-SUB(发布与订阅者）
     void *subscriber = zmq_socket (context, ZMQ_SUB);
     zmq_setsockopt(subscriber, ZMQ_SUBSCRIBE, "", 0);
     zmq_bind (subscriber, "tcp://*:5555");
@@ -40,6 +49,7 @@ int main (void)
     void *publisher = zmq_socket (context, ZMQ_PUB);
     zmq_bind (publisher, "tcp://*:5556");
 
+		//ROUTER-DEALER(共享队列）
     void *router = zmq_socket (context, ZMQ_ROUTER);
     zmq_bind (router, "tcp://*:5557");
 
